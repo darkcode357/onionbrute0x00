@@ -9,14 +9,18 @@ from PIL import Image
 from PIL.ExifTags import TAGS
 import socks
 import socket 
+#import urllib
+import requests 
+#socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS4, "127.0.0.1", 9050, True)
+#socket.socket = socks.socksocket
+import validators
 
-
-socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS4, "127.0.0.1", 9050, True)
-socket.socket = socks.socksocket
-
+def saida(url):
+	dsa = str(validators.url(url))
 
 def findImages(url):
-    print ('[+]=> procurando imagens na url => ' + url)
+    print ('[+]=> procurando imagens na url =>  ' + url  )
+    print("[=] url valida:True")
     urlContent = urllib2.urlopen(url).read()
     try:
         urlContent = urllib2.urlopen(url).read()
@@ -27,22 +31,25 @@ def findImages(url):
     soup = BeautifulSoup(urlContent, 'html.parser')
     imgTags = soup.findAll('img')
     return imgTags
-    print("saida")
 
 
 def downloadImage(imgTag):
-    try:
-        print ('[+]=> baixando imagen ...')
-        imgSrc = imgTag['src']
-        imgContent = urllib2.urlopen(imgSrc).read()
-        imgFileName = basename(urlsplit(imgSrc)[2])
-        imgFile = open(imgFileName, 'wb')
-        imgFile.write(imgContent)
-        imgFile.close()
-        return imgFileName
-    except:
-        return ''
-
+    print("="*59)
+    import glob
+    import os
+    dd = os.getcwd()
+    print ('[+]=> baixando imagen => ' + dd)
+    imgSrc = imgTag['src']
+    imgContent = urllib2.urlopen(imgSrc).read()
+    imgFileName = basename(urlsplit(imgSrc)[2])
+    imgFile = open(imgFileName, 'wb')
+    imgFile.write(imgContent)
+    imgFile.close()
+    #print(imgFileName)
+    #return imgFileName
+    for i in range(1,1000):
+    	for (imgFileName+i)  in glob.glob("*.jpg"):
+		print(imgFileName)
 
 def testForExif(imgFileName):
     try:
@@ -68,11 +75,10 @@ def main():
         	print ("saida")
         	exit(0)
     	else:
+		check = saida(url)
         	imgTags = findImages(url)
         	for imgTag in imgTags:
             		imgFileName = downloadImage(imgTag)
             		testForExif(imgFileName)
-
-
 if __name__ == '__main__':
     main()
