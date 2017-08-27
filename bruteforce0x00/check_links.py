@@ -6,15 +6,14 @@ import stem.process
 
 SOCKS_PORT = 9050
 
-# Set socks proxy and wrap the urllib module
+# definino o proxy 
 
 socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, '127.0.0.1', SOCKS_PORT)
 try:
     socket.socket = socks.socksocket
 except socket.error:
     print("erro")
-# Perform DNS resolution through the socket
-
+# Execute a resolução de DNS através do socket
 def getaddrinfo(*args):
   return [(socket.AF_INET, socket.SOCK_STREAM, 6, '', (args[0], args[1]))]
 
